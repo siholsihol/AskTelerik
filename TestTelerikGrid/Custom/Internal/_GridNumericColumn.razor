@@ -1,0 +1,74 @@
+﻿@using System.Reflection;
+@typeparam TValue
+@inherits ComponentBase
+
+<TelerikNumericTextBox Value="@Value" 
+                       ValueChanged="@((TValue value) => ValueChangedHandler(value))"
+                       ValueExpression="@(() => Value)" 
+                       Max="@Max"
+                       Min="@Min"
+                       Step="@Step"
+                       Arrows="@Arrows"
+                       Decimals="@Decimals"
+                       Format="@Format" 
+                       DebounceDelay="0" />
+
+@code {
+    [Parameter] public TValue Value { get; set; }
+    [Parameter] public EventCallback<TValue> ValueChanged { get; set; }
+    [Parameter] public TValue Max { get; set; } = ReadStaticField("MaxValue");
+    [Parameter] public TValue Min { get; set; } = ReadStaticField("MinValue");
+    [Parameter] public TValue Step { get; set; } = GetDefaultStepValue();
+    [Parameter] public bool Arrows { get; set; } = true;
+    [Parameter] public int Decimals { get; set; } = 2;
+    [Parameter] public string Format { get; set; }
+    [Parameter] public bool ThousandSeparator { get; set; } = true;
+    [Parameter] public object Context { get; set; }
+    [Parameter] public string FieldName { get; set; }
+    [Parameter] public string Name { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (!string.IsNullOrWhiteSpace(Format)) return;
+
+        var loCulture = Thread.CurrentThread.CurrentCulture;
+        var lcThousandSeparator = loCulture.NumberFormat.NumberGroupSeparator;
+        var lcDecimalSeparator = loCulture.NumberFormat.NumberDecimalSeparator;
+
+        if (!ThousandSeparator)
+            lcThousandSeparator = "";
+
+        Format = $"#{lcThousandSeparator}##0";
+
+        if (typeof(TValue) == typeof(decimal))
+        {
+            var liDecimalDigits = loCulture.NumberFormat.NumberDecimalDigits;
+            if (Decimals == liDecimalDigits)
+                Decimals = liDecimalDigits;
+
+            Format = $"{Format}{lcDecimalSeparator}" + new string('0', Decimals);
+        }
+    }
+
+    public void ValueChangedHandler(TValue poValue)
+    {
+        Context.GetType().GetProperty(FieldName).SetValue(Context, poValue);
+
+        if (ValueChanged.HasDelegate)
+            ValueChanged.InvokeAsync(poValue);
+    }
+
+    private static TValue ReadStaticField(string name)
+    {
+        FieldInfo field = typeof(TValue).GetField(name, BindingFlags.Public | BindingFlags.Static);
+        if (field == null)
+            throw new InvalidOperationException("Invalid type argument for R_NumericTextBox<TValue>: " + typeof(TValue).Name);
+
+        return (TValue)field.GetValue(null);
+    }
+
+    private static TValue GetDefaultStepValue()
+    {
+        return (TValue)Convert.ChangeType(1, typeof(TValue));
+    }
+}

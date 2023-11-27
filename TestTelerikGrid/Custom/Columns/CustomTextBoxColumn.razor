@@ -1,0 +1,7 @@
+﻿@inherits BaseCustomColumn
+
+@code {
+    internal override GridColumnType ColumnType { get; set; } = GridColumnType.Text;
+
+    [Parameter] public int? MaxLength { get; set; } 
+}

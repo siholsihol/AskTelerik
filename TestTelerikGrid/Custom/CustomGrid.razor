@@ -1,0 +1,259 @@
+﻿@typeparam TModel
+@inherits ComponentBase
+@using Telerik.FontIcons
+@using System.Reflection
+@using TestTelerikGrid.Custom.Columns
+@using TestTelerikGrid.Custom.Internal
+
+<CascadingValue Value="this" IsFixed>
+    <TelerikGrid @ref="@TelerikGridRef" 
+                 Data="@DataSource"
+                 Id="@Id"
+                 EditMode="@GridEditMode.Inline"
+                 Pageable
+                 Sortable
+                 SelectionMode="GridSelectionMode.Single"
+                 AutoGenerateColumns="false"
+                 @bind-SelectedItems="@SelectedItems"
+                 OnRowClick="@OnRowClick"
+                 Width="@Width"
+                 Height="@Height"
+                 RowHeight="@RowHeight"
+                 OnCreate="@OnCreateHandler"
+                 OnUpdate="@OnUpdateHandler"
+                 OnEdit="@OnEditHandler"
+                 OnDelete="@OnDeleteHandler"
+                 OnCancel="@OnCancelHandler"
+                 EnableLoaderContainer
+                 OnRowDoubleClick="@OnRowDoubleClick">
+        <GridToolBarTemplate>
+            <GridCommandButton Command="Add" Icon="@FontIcon.Plus">@AddNewRowText</GridCommandButton>
+        </GridToolBarTemplate>
+        <NoDataTemplate>
+            <strong>No Data available</strong>
+        </NoDataTemplate>
+        <GridColumns>
+            @foreach (var column in _columns)
+            {
+                <GridColumn Field="@column.FieldName"
+                            Title="@column.HeaderText"
+                            TextAlign="@column.TextAlignment"
+                            Visible="@column.Visible"
+                            Editable="@column.Enabled"
+                            Width="@column.Width"
+                            EditorTemplate="@(GetColumnEditorTemplate(column))"
+                            Template="@(GetDefaultColumnTemplate(column))"
+                            HeaderTemplate="@(GetDefaultHeaderColumnTemplate(column))"
+                            Filterable="@column.Filterable"
+                            Resizable="@column.Resizable"
+                            MinResizableWidth="@column.MinResizableWidth"
+                            MaxResizableWidth="@column.MaxResizableWidth"
+                            Sortable="@column.Sortable" />
+            }
+        </GridColumns>
+    </TelerikGrid>
+
+    @GridColumnsContent
+</CascadingValue>
+
+@code {
+    public RenderFragment<object> GetDefaultColumnTemplate(BaseCustomColumn poColumnInfo)
+    {
+        RenderFragment<object> ColumnTemplate = context => __builder =>
+        {
+            var lcFieldName = poColumnInfo.FieldName;
+            PropertyInfo propertyInfo = context.GetType().GetProperty(lcFieldName);
+            var propType = propertyInfo.PropertyType;
+            var propValue = propertyInfo.GetValue(context);
+
+            switch (poColumnInfo.ColumnType)
+            {
+                case GridColumnType.Text:
+                    <text>@propValue</text>
+                    break;
+                case GridColumnType.Numeric:
+                    var numericColumnInfo = poColumnInfo as CustomNumericTextBoxColumn;
+
+                    if (string.IsNullOrWhiteSpace(numericColumnInfo.Format))
+                    {
+                        var loCulture = Thread.CurrentThread.CurrentCulture;
+                        var lcThousandSeparator = loCulture.NumberFormat.NumberGroupSeparator;
+                        var lcDecimalSeparator = loCulture.NumberFormat.NumberDecimalSeparator;
+
+                        if (!numericColumnInfo.ThousandSeparator)
+                            lcThousandSeparator = "";
+
+                        var lcFormat = $"#{lcThousandSeparator}##0";
+
+                        if (propType == typeof(decimal))
+                        {
+                            var liDecimalDigit = loCulture.NumberFormat.NumberDecimalDigits;
+                            if (numericColumnInfo.Decimals != liDecimalDigit)
+                                liDecimalDigit = numericColumnInfo.Decimals;
+
+                            lcFormat = $"{lcFormat}{lcDecimalSeparator}" + new string('0', liDecimalDigit);
+                            var decimalValue = Convert.ToDecimal(propValue);
+                            var decimalFormatedValue = decimalValue.ToString(lcFormat);
+
+                            <text>@decimalFormatedValue</text>
+                        }
+                        else if (propType == typeof(Int16))
+                        {
+                            var shortValue = Convert.ToInt16(propValue);
+                            var intFormatedValue = shortValue.ToString(lcFormat);
+
+                            <text>@intFormatedValue</text>
+                        }
+                        else if (propType == typeof(Int64))
+                        {
+                            var longValue = Convert.ToInt64(propValue);
+                            var longFormatedValue = longValue.ToString(lcFormat);
+
+                            <text>@longFormatedValue</text>
+                        }
+                        else
+                        {
+                            var intValue = Convert.ToInt32(propValue);
+                            var intFormatedValue = intValue.ToString(lcFormat);
+
+                            <text>@intFormatedValue</text>
+                        }
+                    }
+                    else
+                    {
+                        if (propType == typeof(decimal))
+                        {
+                            var decimalValue = Convert.ToDecimal(propValue);
+                            var decimalFormatedValue = decimalValue.ToString(numericColumnInfo.Format);
+
+                            <text>@decimalFormatedValue</text>
+                        }
+                        else if (propType == typeof(Int16))
+                        {
+                            var shortValue = Convert.ToInt16(propValue);
+                            var intFormatedValue = shortValue.ToString(numericColumnInfo.Format);
+
+                            <text>@intFormatedValue</text>
+                        }
+                        else if (propType == typeof(Int64))
+                        {
+                            var longValue = Convert.ToInt64(propValue);
+                            var intFormatedValue = longValue.ToString(numericColumnInfo.Format);
+
+                            <text>@intFormatedValue</text>
+                        }
+                        else
+                        {
+                            var intValue = Convert.ToInt32(propValue);
+                            var intFormatedValue = intValue.ToString(numericColumnInfo.Format);
+
+                            <text>@intFormatedValue</text>
+                        }
+                    }
+                    break;
+                default:
+                    <text>@propValue</text>
+                    break;
+            }
+        };
+
+        return ColumnTemplate;
+    }
+
+    public RenderFragment<object> GetColumnEditorTemplate(BaseCustomColumn poColumnInfo)
+    {
+        RenderFragment<object> ColumnTemplate = context => __builder =>
+        {
+            var lcFieldName = poColumnInfo.FieldName;
+            PropertyInfo propertyInfo = context.GetType().GetProperty(lcFieldName);
+            var propType = propertyInfo.PropertyType;
+            var propValue = propertyInfo.GetValue(context);
+
+            switch (poColumnInfo.ColumnType)
+            {
+                case GridColumnType.Text:
+                    var textColumnInfo = poColumnInfo as CustomTextBoxColumn;
+                    var stringValue = Convert.ToString(propValue);
+
+                    <_GridTextColumn @bind-Value="@stringValue"
+                                     Context="@context"
+                                     FieldName="@lcFieldName"
+                                     MaxLength="@textColumnInfo.MaxLength"
+                                     Name="@poColumnInfo.Name" />
+                    break;
+                case GridColumnType.Numeric:
+                    var columnInfo = poColumnInfo as CustomNumericTextBoxColumn;
+
+                    if (propType == typeof(int) || propType == typeof(Int32))
+                    {
+                        var intValue = Convert.ToInt32(propValue);
+
+                        <_GridNumericColumn @bind-Value="@intValue"
+                                            Context="@context"
+                                            FieldName="@lcFieldName"
+                                            Arrows="@columnInfo.Arrows"
+                                            Decimals="@columnInfo.Decimals"
+                                            Format="@columnInfo.Format"
+                                            Max="@columnInfo.Max"
+                                            Min="@columnInfo.Min"
+                                            Step="@columnInfo.Step"
+                                            ThousandSeparator="@columnInfo.ThousandSeparator"
+                                            Name="@columnInfo.Name" />
+                    }
+                    else if (propType == typeof(decimal))
+                    {
+                        var decimalValue = Convert.ToDecimal(propValue);
+
+                        <_GridNumericColumn @bind-Value="@decimalValue"
+                                            Context="@context"
+                                            FieldName="@lcFieldName"
+                                            Arrows="@columnInfo.Arrows"
+                                            Decimals="@columnInfo.Decimals"
+                                            Format="@columnInfo.Format"
+                                            Max="@columnInfo.Max"
+                                            Min="@columnInfo.Min"
+                                            Step="@columnInfo.Step"
+                                            ThousandSeparator="@columnInfo.ThousandSeparator"
+                                            Name="@columnInfo.Name" />
+                    }
+                    else if (propType == typeof(long) || propType == typeof(Int64))
+                    {
+                        var longValue = Convert.ToInt64(propValue);
+
+                        <_GridNumericColumn @bind-Value="@longValue"
+                                            Context="@context"
+                                            FieldName="@lcFieldName"
+                                            Arrows="@columnInfo.Arrows"
+                                            Decimals="@columnInfo.Decimals"
+                                            Format="@columnInfo.Format"
+                                            Max="@columnInfo.Max"
+                                            Min="@columnInfo.Min"
+                                            Step="@columnInfo.Step"
+                                            ThousandSeparator="@columnInfo.ThousandSeparator"
+                                            Name="@columnInfo.Name" />
+                    }
+                    break;
+                default:
+                    @propValue
+                    break;
+            }
+        };
+
+        return ColumnTemplate;
+    }
+
+    public RenderFragment GetDefaultHeaderColumnTemplate(BaseCustomColumn poColumnInfo)
+    {
+        RenderFragment ColumnTemplate = __builder =>
+        {
+            if (!string.IsNullOrWhiteSpace(poColumnInfo.HeaderText))
+            {
+                <div class="text-center">
+                    <text>@poColumnInfo.HeaderText</text>
+                </div>
+            }
+        };
+
+        return ColumnTemplate;
+    }
+}

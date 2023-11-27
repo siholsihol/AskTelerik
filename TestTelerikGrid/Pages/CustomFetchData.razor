@@ -1,0 +1,73 @@
+﻿@page "/customfetchdata"
+@using System.Reflection
+@using System.Collections.ObjectModel
+@using TestTelerikGrid.Custom.Columns
+@inject HttpClient Http
+
+<PageTitle>Product</PageTitle>
+
+<h1>Product</h1>
+
+<p>This component demonstrates fetching data from the server.</p>
+
+<CustomGrid DataSource="products">
+    <GridColumnsContent>
+        <CustomNumericTextBoxColumn FieldName="@nameof(ProductDTO.Id)" HeaderText="Id"></CustomNumericTextBoxColumn>
+        <CustomTextBoxColumn FieldName="@nameof(ProductDTO.Name)" HeaderText="Product Name"></CustomTextBoxColumn>
+    </GridColumnsContent>
+</CustomGrid>
+
+@code {
+    [Inject] public ProductService ProductService { get; set; }
+
+    private ObservableCollection<ProductDTO> products;
+
+    protected override Task OnInitializedAsync()
+    {
+        var loProduct = ProductService.GenerateProduct(10);
+        products = new ObservableCollection<ProductDTO>(loProduct);
+
+        return Task.CompletedTask;
+    }
+
+    #region CRUD
+    private void OnCreateHandler(GridCommandEventArgs args)
+    {
+        ProductService.CreateProduct((ProductDTO)args.Item);
+
+        Console.WriteLine("Create event is fired.");
+    }
+
+    private void OnEditHandler(GridCommandEventArgs args)
+    {
+        ProductDTO item = (ProductDTO)args.Item;
+
+        // prevent opening for edit based on condition
+        if (item.Id < 3)
+        {
+            args.IsCancelled = true;// the general approach for cancelling an event
+        }
+
+        Console.WriteLine("Edit event is fired.");
+    }
+
+    private void OnUpdateHandler(GridCommandEventArgs args)
+    {
+        ProductService.UpdateProduct((ProductDTO)args.Item);
+
+        Console.WriteLine("Update event is fired.");
+    }
+
+    private void OnDeleteHandler(GridCommandEventArgs args)
+    {
+        ProductService.DeleteProduct((ProductDTO)args.Item);
+
+        Console.WriteLine("Delete event is fired.");
+    }
+
+    private void OnCancelHandler(GridCommandEventArgs args)
+    {
+        Console.WriteLine("Cancel event is fired.");
+    }
+    #endregion
+}

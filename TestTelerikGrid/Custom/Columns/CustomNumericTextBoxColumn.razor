@@ -1,0 +1,29 @@
+﻿@inherits BaseCustomColumn
+@using System.Reflection
+
+@code {
+    internal override GridColumnType ColumnType { get; set; } = GridColumnType.Numeric;
+    public override ColumnTextAlign TextAlignment { get; set; } = ColumnTextAlign.Right;
+
+    [Parameter] public string Format { get; set; }
+    [Parameter] public bool ThousandSeparator { get; set; } = true;
+    [Parameter] public int Decimals { get; set; } = 2;
+    [Parameter] public bool Arrows { get; set; } = true;
+    [Parameter] public int Max { get; set; } = ReadStaticField("MaxValue");
+    [Parameter] public int Min { get; set; } = ReadStaticField("MinValue");
+    [Parameter] public int Step { get; set; } = GetDefaultStepValue();
+
+    private static int ReadStaticField(string name)
+    {
+        FieldInfo field = typeof(int).GetField(name, BindingFlags.Public | BindingFlags.Static);
+        if (field == null)
+            throw new InvalidOperationException("Invalid type argument for R_NumericTextBox<TValue>: " + typeof(int).Name);
+
+        return (int)field.GetValue(null);
+    }
+
+    private static int GetDefaultStepValue()
+    {
+        return (int)Convert.ChangeType(1, typeof(int));
+    }
+}
