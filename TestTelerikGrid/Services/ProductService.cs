@@ -12,7 +12,7 @@ namespace TestTelerikGrid.Services
             var faker = new Faker<ProductDTO>()
             .RuleFor(u => u.Id, f => f.Random.Number(0, 200))
             .RuleFor(u => u.Name, f => f.Commerce.Product())
-            .RuleFor(u => u.Price, f => Convert.ToDecimal(f.Commerce.Price(100, 1000)))
+            .RuleFor(u => u.Price, f => Convert.ToDecimal(f.Commerce.Price(100, 10000)))
             .RuleFor(u => u.ReleaseDate, f => f.Date.Recent(10))
             .RuleFor(u => u.Active, f => Convert.ToBoolean(f.Random.Number(0, 1)));
 

@@ -1,59 +1,58 @@
 ﻿@typeparam TModel
 @inherits ComponentBase
-@using Telerik.FontIcons
-@using System.Reflection
-@using TestTelerikGrid.Custom.Columns
-@using TestTelerikGrid.Custom.Internal
 
 <CascadingValue Value="this" IsFixed>
-    <TelerikGrid @ref="@TelerikGridRef" 
-                 Data="@DataSource"
-                 Id="@Id"
-                 EditMode="@GridEditMode.Inline"
-                 Pageable
-                 Sortable
-                 SelectionMode="GridSelectionMode.Single"
-                 AutoGenerateColumns="false"
-                 @bind-SelectedItems="@SelectedItems"
-                 OnRowClick="@OnRowClick"
-                 Width="@Width"
-                 Height="@Height"
-                 RowHeight="@RowHeight"
-                 OnCreate="@OnCreateHandler"
-                 OnUpdate="@OnUpdateHandler"
-                 OnEdit="@OnEditHandler"
-                 OnDelete="@OnDeleteHandler"
-                 OnCancel="@OnCancelHandler"
-                 EnableLoaderContainer
-                 OnRowDoubleClick="@OnRowDoubleClick">
-        <GridToolBarTemplate>
-            <GridCommandButton Command="Add" Icon="@FontIcon.Plus">@AddNewRowText</GridCommandButton>
-        </GridToolBarTemplate>
-        <NoDataTemplate>
-            <strong>No Data available</strong>
-        </NoDataTemplate>
-        <GridColumns>
-            @foreach (var column in _columns)
-            {
-                <GridColumn Field="@column.FieldName"
-                            Title="@column.HeaderText"
-                            TextAlign="@column.TextAlignment"
-                            Visible="@column.Visible"
-                            Editable="@column.Enabled"
-                            Width="@column.Width"
-                            EditorTemplate="@(GetColumnEditorTemplate(column))"
-                            Template="@(GetDefaultColumnTemplate(column))"
-                            HeaderTemplate="@(GetDefaultHeaderColumnTemplate(column))"
-                            Filterable="@column.Filterable"
-                            Resizable="@column.Resizable"
-                            MinResizableWidth="@column.MinResizableWidth"
-                            MaxResizableWidth="@column.MaxResizableWidth"
-                            Sortable="@column.Sortable" />
-            }
-        </GridColumns>
-    </TelerikGrid>
+    <div @onkeyup="@OnHandleKeyDown">
+        <TelerikGrid @ref="@TelerikGridRef"
+                     Data="@DataSource"
+                     Id="@Id"
+                     EditMode="@GridEditMode.Inline"
+                          Pageable
+                          Sortable
+                      SelectionMode="GridSelectionMode.Single"
+                      AutoGenerateColumns="false"
+                      @bind-SelectedItems="@SelectedItems"
+                      OnRowClick="@OnRowClick"
+                      Width="@Width"
+                      Height="@Height"
+                      RowHeight="@RowHeight"
+                      OnAdd="OnAddHandler"
+                      OnCreate="@OnCreateHandler"
+                      OnUpdate="@OnUpdateHandler"
+                      OnEdit="@OnEditHandler"
+                      OnDelete="@OnDeleteHandler"
+                      OnCancel="@OnCancelHandler"
+                          EnableLoaderContainer
+                      OnRowDoubleClick="@OnRowDoubleClick">
+             <GridToolBarTemplate>
+                 <GridCommandButton Command="Add" Icon="@FontIcon.Plus">@AddNewRowText</GridCommandButton>
+                </GridToolBarTemplate>
+                <NoDataTemplate>
+                    <strong>No Data available</strong>
+                </NoDataTemplate>
+                <GridColumns>
+                    @foreach (var column in _columns)
+                    {
+                        <GridColumn Field="@column.FieldName"
+                                    Title="@column.HeaderText"
+                                    TextAlign="@column.TextAlignment"
+                                    Visible="@column.Visible"
+                                    Editable="@column.Enabled"
+                                    Width="@column.Width"
+                                    EditorTemplate="@(GetColumnEditorTemplate(column))"
+                                    Template="@(GetDefaultColumnTemplate(column))"
+                                    HeaderTemplate="@(GetDefaultHeaderColumnTemplate(column))"
+                                    Filterable="@column.Filterable"
+                                    Resizable="@column.Resizable"
+                                    MinResizableWidth="@column.MinResizableWidth"
+                                    MaxResizableWidth="@column.MaxResizableWidth"
+                                    Sortable="@column.Sortable" />
+                    }
+            </GridColumns>
+        </TelerikGrid>
 
-    @GridColumnsContent
+        @GridColumnsContent
+    </div>
 </CascadingValue>
 
 @code {

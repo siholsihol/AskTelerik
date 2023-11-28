@@ -1,4 +1,4 @@
-﻿namespace TestTelerikGrid.Custom
+﻿namespace TestTelerikGrid.Custom.Enums
 {
     public enum GridColumnType
     {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Telerik.Blazor;
+using TestTelerikGrid.Custom.Enums;
 
 namespace TestTelerikGrid.Custom.Columns
 {
