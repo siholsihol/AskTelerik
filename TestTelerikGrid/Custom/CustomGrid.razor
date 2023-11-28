@@ -6,9 +6,9 @@
         <TelerikGrid @ref="@TelerikGridRef"
                      Data="@DataSource"
                      Id="@Id"
-                     EditMode="@GridEditMode.Inline"
-                          Pageable
-                          Sortable
+                     EditMode="@GridEditMode.Inline" 
+                     Pageable 
+                     Sortable
                       SelectionMode="GridSelectionMode.Single"
                       AutoGenerateColumns="false"
                       @bind-SelectedItems="@SelectedItems"
@@ -21,8 +21,8 @@
                       OnUpdate="@OnUpdateHandler"
                       OnEdit="@OnEditHandler"
                       OnDelete="@OnDeleteHandler"
-                      OnCancel="@OnCancelHandler"
-                          EnableLoaderContainer
+                      OnCancel="@OnCancelHandler" 
+                      EnableLoaderContainer
                       OnRowDoubleClick="@OnRowDoubleClick">
              <GridToolBarTemplate>
                  <GridCommandButton Command="Add" Icon="@FontIcon.Plus">@AddNewRowText</GridCommandButton>
@@ -149,6 +149,11 @@
                             <text>@intFormatedValue</text>
                         }
                     }
+                    break;
+                case GridColumnType.ComboBox:
+                    var comboBoxColumnInfo = poColumnInfo as CustomComboBoxColumn;
+
+                    <text>@comboBoxColumnInfo.DictionaryData[propValue]</text>
                     break;
                 default:
                     <text>@propValue</text>

@@ -1,0 +1,40 @@
+﻿@inherits BaseCustomColumn
+
+@code {
+    internal override GridColumnType ColumnType { get; set; } = GridColumnType.ComboBox;
+
+    private IEnumerable<object> _data;
+    [Parameter]
+    public IEnumerable<object> Data
+    {
+        get
+        {
+            return _data;
+        }
+        set
+        {
+            SetDataValue(ref _data, value);
+        }
+    }
+
+    [Parameter] public string TextField { get; set; }
+    [Parameter] public string ValueField { get; set; }
+    [Parameter] public string PopupMaxHeight { get; set; } = "auto";
+
+    public Dictionary<object, object> DictionaryData = new Dictionary<object, object>();
+
+    private void SetDataValue<T>(ref T backingField, T value)
+    {
+        if (Utility.CompareObject(value, backingField))
+            return;
+        backingField = value;
+
+        DictionaryData = new Dictionary<object, object>();
+        foreach (var item in _data)
+        {
+            var loValue = item.GetType().GetProperties().FirstOrDefault(x => x.Name == ValueField)?.GetValue(item);
+            var loText = item.GetType().GetProperties().FirstOrDefault(x => x.Name == TextField)?.GetValue(item);
+            DictionaryData[loValue] = loText;
+        }
+    }
+}

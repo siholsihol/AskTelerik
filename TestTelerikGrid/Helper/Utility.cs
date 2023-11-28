@@ -33,6 +33,20 @@ namespace TestTelerikGrid.Helper
 
             return JsonConvert.DeserializeObject<TResult>(loJsonSerialized);
         }
+
+        public static bool CompareObject(this object poObj, object poAnotherObj)
+        {
+            if (ReferenceEquals(poObj, poAnotherObj)) return true;
+
+            if ((poObj == null) || (poAnotherObj == null)) return false;
+
+            if (poObj.GetType() != poAnotherObj.GetType()) return false;
+
+            var objJson = JsonConvert.SerializeObject(poObj);
+            var anotherObjJson = JsonConvert.SerializeObject(poAnotherObj);
+
+            return objJson == anotherObjJson;
+        }
         #endregion
     }
 }

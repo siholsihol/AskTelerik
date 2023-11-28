@@ -16,6 +16,12 @@
         <CustomNumericTextBoxColumn FieldName="@nameof(ProductDTO.Id)" HeaderText="Id"></CustomNumericTextBoxColumn>
         <CustomTextBoxColumn FieldName="@nameof(ProductDTO.Name)" HeaderText="Product Name"></CustomTextBoxColumn>
         <CustomNumericTextBoxColumn FieldName="@nameof(ProductDTO.Price)" HeaderText="Price"></CustomNumericTextBoxColumn>
+        <CustomComboBoxColumn Data=@categories
+                              ValueField="@nameof(CategoryDTO.Id)"
+                              TextField="@nameof(CategoryDTO.Name)"
+                              FieldName="@nameof(ProductDTO.CategoryId)"
+                              HeaderText="Category"
+                              PopupMaxHeight="50px" />
     </GridColumnsContent>
 </CustomGrid>
 
@@ -23,10 +29,13 @@
     [Inject] public ProductService ProductService { get; set; }
 
     private ObservableCollection<ProductDTO> products;
+    private List<CategoryDTO> categories;
 
     protected override Task OnInitializedAsync()
     {
-        var loProduct = ProductService.GenerateProduct(10);
+        categories = ProductService.GetCategories();
+
+        var loProduct = ProductService.GenerateProduct(10, categories);
         products = new ObservableCollection<ProductDTO>(loProduct);
 
         return Task.CompletedTask;
