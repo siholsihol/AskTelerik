@@ -1,0 +1,40 @@
+﻿@typeparam TItem
+@typeparam TValue
+@inherits ComponentBase
+
+<TelerikComboBox Data="@Data" 
+                 Value="@Value"
+                 ValueField="@ValueField"
+                 TextField="@TextField"
+                 ValueChanged="@((TValue value) => ValueChangedHandler(value))"
+                 ValueExpression="@(() => Value)"
+                 ClearButton="false" 
+                 DebounceDelay="0">
+    <ComboBoxSettings>
+        <ComboBoxPopupSettings Height="auto" MaxHeight="@PopupMaxHeight" />
+    </ComboBoxSettings>
+</TelerikComboBox>
+
+@code {
+    [Parameter] public EventCallback<TValue> ValueChanged { get; set; }
+    [Parameter] public IEnumerable<TItem> Data { get; set; }
+    [Parameter] public TValue Value { get; set; }
+    [Parameter] public string ValueField { get; set; }
+    [Parameter] public string TextField { get; set; }
+    [Parameter] public object Context { get; set; }
+    [Parameter] public string FieldName { get; set; }
+    [Parameter] public string Name { get; set; }
+    [Parameter] public string PopupMaxHeight { get; set; } = "auto";
+
+    public void ValueChangedHandler(TValue poValue)
+    {
+        var loPropertyInfo = Context.GetType().GetProperty(FieldName);
+        var loPropertyType = loPropertyInfo.PropertyType;
+        var loValue = Convert.ChangeType(poValue, loPropertyType);
+
+        loPropertyInfo.SetValue(Context, loValue);
+
+        if (ValueChanged.HasDelegate)
+            ValueChanged.InvokeAsync(poValue);
+    }
+}

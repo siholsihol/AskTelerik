@@ -237,6 +237,18 @@
                                             Name="@columnInfo.Name" />
                     }
                     break;
+                case GridColumnType.ComboBox:
+                    var comboBoxColumnInfo = poColumnInfo as CustomComboBoxColumn;
+
+                    <_GridComboBoxColumn Data="@comboBoxColumnInfo.Data"
+                                         @bind-Value="@propValue"
+                                         Context="@context"
+                                         FieldName="@lcFieldName"
+                                         ValueField="@comboBoxColumnInfo.ValueField"
+                                         TextField="@comboBoxColumnInfo.TextField"
+                                         Name="@comboBoxColumnInfo.Name"
+                                         PopupMaxHeight="@comboBoxColumnInfo.PopupMaxHeight" />
+                    break;
                 default:
                     @propValue
                     break;
