@@ -16,11 +16,12 @@
         <CustomNumericTextBoxColumn FieldName="@nameof(ProductDTO.Id)" HeaderText="Id"></CustomNumericTextBoxColumn>
         <CustomTextBoxColumn FieldName="@nameof(ProductDTO.Name)" HeaderText="Product Name"></CustomTextBoxColumn>
         <CustomNumericTextBoxColumn FieldName="@nameof(ProductDTO.Price)" HeaderText="Price"></CustomNumericTextBoxColumn>
-        <CustomComboBoxColumn ValueField="@nameof(CategoryDTO.Id)"
+@*         <CustomComboBoxColumn ValueField="@nameof(CategoryDTO.Id)"
                               TextField="@nameof(CategoryDTO.Name)"
                               Data=@categories
                               FieldName="@nameof(ProductDTO.CategoryId)"
-                              HeaderText="Category" />
+                              HeaderText="Category" /> *@
+        <CustomLookupColumn FieldName="@nameof(ProductDTO.CategoryId)" HeaderText="Category"></CustomLookupColumn>
     </GridColumnsContent>
 </CustomGrid>
 

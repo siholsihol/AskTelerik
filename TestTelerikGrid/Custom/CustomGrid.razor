@@ -249,6 +249,15 @@
                                          Name="@comboBoxColumnInfo.Name"
                                          PopupMaxHeight="@comboBoxColumnInfo.PopupMaxHeight" />
                     break;
+                case GridColumnType.Modal:
+                    var lookupColumnInfo = poColumnInfo as CustomLookupColumn;
+                    var lookupStringValue = Convert.ToString(propValue);
+
+                    <_GridLookupColumn @bind-Value="@lookupStringValue"
+                                     Context="@context"
+                                     FieldName="@lcFieldName"
+                                     Name="@poColumnInfo.Name" />
+                    break;
                 default:
                     @propValue
                     break;
