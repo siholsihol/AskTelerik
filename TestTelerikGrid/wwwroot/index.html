@@ -27,7 +27,26 @@
     <script type="text/javascript">
         function focusToElement(id) {
             const element = document.getElementById(id);
-            element.focus();
+            if (element != null) {
+                element.focus();
+            }
+        }
+
+        function tabToButton(args, id) {
+            if (args.key == "Tab" && !args.shiftKey) {
+                focusToElement(id);
+                args.preventDefault();
+                args.stopImmediatePropagation();
+            }
+        }
+
+        function tabLastColumn(args) {
+            if (args.key == "Tab" && !args.shiftKey) {
+                DotNet.invokeMethodAsync('TestTelerikGrid', 'InvokeSave');
+
+                args.preventDefault();
+                args.stopImmediatePropagation();
+            }
         }
     </script>
 </body>

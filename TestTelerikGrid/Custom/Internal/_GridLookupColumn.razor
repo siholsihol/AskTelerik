@@ -1,19 +1,15 @@
 ﻿@inherits ComponentBase
 
-<div @onkeyup="@OnHandleKeyDownLookup">
-    <div class="row">
-        <div class="col-10">
-            @* <input @ref="@_inputRef" type="text" value="@Value" tabindex="0" class="w-100" @onkeyup="@OnHandleKeyDownLookup" /> *@
-            <TelerikTextBox Value="@Value"
-                            ValueChanged="@ValueChangedHandler"
-                            ValueExpression="@(() => Value)"
-                            DebounceDelay="0" 
-                            Class="w-100" 
-                            OnBlur="@OnBlurHandler" />
-        </div>
-        <div class="col-2">
-            <TelerikButton @ref="@_buttonRef" OnClick="@OnClickHandler" TabIndex="-1" Class="w-100" Id="LookupButton1">...</TelerikButton>
-        </div>
+<div class="row">
+    <div class="col-10" onkeydown="tabToButton(event,'LookupButton1')">
+        <TelerikTextBox Value="@Value"
+                        ValueChanged="@ValueChangedHandler"
+                        ValueExpression="@(() => Value)"
+                        DebounceDelay="0"
+                        Class="w-100" />
+    </div>
+    <div class="col-2" onkeydown="tabLastColumn(event)">
+        <TelerikButton @ref="@_buttonRef" OnClick="@OnClickHandler" TabIndex="0" Class="w-100" Id="LookupButton1">...</TelerikButton>
     </div>
 </div>
 
@@ -23,9 +19,9 @@
     [Parameter] public object Context { get; set; }
     [Parameter] public string FieldName { get; set; }
     [Parameter] public string Name { get; set; }
+
     [Inject] private IJSRuntime JS { get; set; }
 
-    private ElementReference _inputRef;
     private TelerikButton _buttonRef;
 
     private void OnClickHandler()
@@ -41,21 +37,9 @@
             ValueChanged.InvokeAsync(pcValue);
     }
 
-    private async Task OnBlurHandler()
+    [JSInvokable]
+    public static Task InvokeSave()
     {
-        try
-        {
-            // await _buttonRef.FocusAsync(); //not working
-            await JS.InvokeVoidAsync("focusToElement", "LookupButton1"); //not working
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-        }
-    }
-
-    private void OnHandleKeyDownLookup(KeyboardEventArgs e)
-    {
-
+        return Task.CompletedTask;
     }
 }
