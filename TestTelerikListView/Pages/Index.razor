@@ -1,0 +1,145 @@
+﻿@page "/"
+
+<TelerikListView Data="@Data"
+                 Pageable
+                 @bind-Page="@Page"
+                 Height="500px"
+                 Width="300px">
+    <HeaderTemplate>
+        <div>Filter by Name</div>
+        <TelerikTextBox Class="txt-listview" @bind-Value="@FilterText"></TelerikTextBox>
+        <TelerikButton OnClick="@Filter">Filter</TelerikButton>
+        @*<TelerikButton OnClick="@ClearFilter">Clear Filter</TelerikButton>*@
+    </HeaderTemplate>
+    <Template>
+        <div class="k-card k-card-horizontal">
+            <div class="k-card-body">
+                <div class="k-hbox k-justify-content-between k-flex-wrap ">
+                    <div class="product-name">
+                        <h4 class="k-card-title">@context.Name</h4>
+                        <h5 class="k-card-subtitle">@context.CategoryName</h5>
+                    </div>
+                    <ul class="product-info">
+                        @*<li>Active: @context.Active</li>*@
+                        <li>Release: @context.ReleaseDate.ToString("dd-MM-yyyy")</li>
+                    </ul>
+                    <div class="product-price">
+                        <strong>Price: </strong>@context.Price
+                    </div>
+                </div>
+            </div>
+        </div>
+    </Template>
+</TelerikListView>
+
+@code {
+    private const int _defaultPage = 1;
+    private List<ProductCategoryDTO> SourceData { get; set; }
+    private List<ProductCategoryDTO> Data { get; set; }
+    private string FilterText { get; set; } = string.Empty;
+    private int Page { get; set; } = _defaultPage;
+    private List<CategoryDTO> Categories { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Categories = CategoryService.GetCategories();
+
+        var loProducts = ProductService.GetProducts();
+        SourceData = loProducts.Select(x => new ProductCategoryDTO 
+        { 
+            Id = x.Id,
+            Name = x.Name,
+            Active = x.Active,
+            Price = x.Price,
+            ReleaseDate = x.ReleaseDate,
+            SupplierId = x.SupplierId,
+            CategoryId = x.CategoryId,
+            CategoryName = Categories.Where(y => y.Id == x.CategoryId).FirstOrDefault() != null ? Categories.Where(y => y.Id == x.CategoryId).FirstOrDefault().Name : "Unknown"
+        }).ToList();
+
+        Filter();
+    }
+
+    private void Filter()
+    {
+        var request = new DataSourceRequest()
+        {
+            Filters = new List<IFilterDescriptor>()
+        };
+        request.Filters.Add(new FilterDescriptor("Name", FilterOperator.Contains, FilterText));
+
+        Data = SourceData.ToDataSourceResult(request).Data as List<ProductCategoryDTO>;
+        Page = _defaultPage;
+    }
+
+    private void ClearFilter()
+    {
+        FilterText = string.Empty;
+        Filter();
+    }
+}
+
+<style>
+    .k-listview-header {
+        padding: 20px;
+    }
+
+    .k-card {
+        padding: 10px 20px;
+        border-width: 0 0 1px 0;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+        .k-card:last-child {
+            border-bottom: 0;
+        }
+
+        .k-card .k-card-title {
+            padding: 0;
+            font-size: 1em;
+            font-weight: bold;
+            line-height: normal;
+        }
+
+    .k-card-subtitle {
+        font-size: 1em;
+        margin-bottom: 0;
+    }
+
+    .product-name {
+        width: 50%;
+        min-width: 180px;
+        padding: 5px 0;
+    }
+
+    .product-info {
+        width: 25%;
+        min-width: 120px;
+        margin: 0;
+        padding: 5px 0;
+        font-size: .875em;
+    }
+
+        .product-info li {
+            list-style-type: none;
+        }
+
+    .product-price {
+        width: 15%;
+        min-width: 150px;
+        padding: 5px 0;
+        font-size: .875em;
+    }
+
+    .product-img {
+        width: 80px;
+        height: 50px;
+        text-align: center;
+        margin: auto;
+    }
+
+    .txt-listview {
+        max-width: 200px;
+    }
+</style>
