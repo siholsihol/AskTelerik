@@ -3,8 +3,7 @@
 <TelerikTextBox Value="@Value"
                 ValueChanged="@ValueChangedHandler"
                 ValueExpression="@(() => Value)" 
-                MaxLength="@MaxLength"
-                DebounceDelay="0" />
+                MaxLength="@MaxLength" />
 
 @code {
     [Parameter] public EventCallback<string> ValueChanged { get; set; }
@@ -13,8 +12,6 @@
     [Parameter] public string FieldName { get; set; }
     [Parameter] public int? MaxLength { get; set; }
     [Parameter] public string Name { get; set; }
-    //[Parameter] public Action<object, string> R_CellValueChanged { get; set; }
-    //[Parameter] public Action<object, string> R_CellLostFocused { get; set; }
 
     public void ValueChangedHandler(string pcValue)
     {
@@ -22,12 +19,5 @@
 
         if (ValueChanged.HasDelegate)
             ValueChanged.InvokeAsync(pcValue);
-
-        //R_CellValueChanged?.Invoke(pcValue, Name);
     }
-
-    //private void OnBlurHandler()
-    //{
-    //    R_CellLostFocused?.Invoke(Value, Name);
-    //}
 }
