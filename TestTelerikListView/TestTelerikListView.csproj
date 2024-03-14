@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Realta NetCore Training\BlazorTraining\Example\DataDummyProvider\DataDummyProvider.csproj" />
+    <ProjectReference Include="..\DataDummyProvider\DataDummyProvider.csproj" />
   </ItemGroup>
 
 </Project>
