@@ -13,10 +13,13 @@
             R_AfterAdd="@R_AfterAdd"
             R_ServiceDelete="@R_ServiceDelete">
     <GridColumnsContent>
-        <CustomNumericTextBoxColumn FieldName="@nameof(ProductDTO.Id)" HeaderText="Id"></CustomNumericTextBoxColumn>
-        <CustomTextBoxColumn FieldName="@nameof(ProductDTO.Name)" HeaderText="Product Name"></CustomTextBoxColumn>
-        <CustomLookupColumn FieldName="@nameof(ProductDTO.CategoryId)" HeaderText="Category"></CustomLookupColumn>
-        <CustomNumericTextBoxColumn FieldName="@nameof(ProductDTO.Price)" HeaderText="Price"></CustomNumericTextBoxColumn>
+        <CustomCheckboxSelectColumn FieldName="@nameof(ProductDTO.Selected)"
+                                    HeaderText="Selected"
+                                    ShowSelectAllHeader />
+        <CustomNumericTextBoxColumn FieldName="@nameof(ProductDTO.Id)" HeaderText="Id" />
+        <CustomTextBoxColumn FieldName="@nameof(ProductDTO.Name)" HeaderText="Product Name" />
+        <CustomLookupColumn FieldName="@nameof(ProductDTO.CategoryId)" HeaderText="Category" />
+        <CustomNumericTextBoxColumn FieldName="@nameof(ProductDTO.Price)" HeaderText="Price" />
 @*         <CustomComboBoxColumn ValueField="@nameof(CategoryDTO.Id)"
                               TextField="@nameof(CategoryDTO.Name)"
                               Data=@categories

@@ -1,0 +1,23 @@
+﻿@typeparam TValue
+@inherits ComponentBase
+
+<TelerikCheckBox Value="@Value"
+                 ValueChanged="@((TValue value) => ValueChangedHandler(value))"
+                 ValueExpression="@(() => Value)"
+                 Enabled="@Enabled" 
+                 TabIndex="@TabIndex" 
+                 Indeterminate="@Indeterminate" />
+
+@code {
+    [Parameter] public EventCallback<TValue> ValueChanged { get; set; }
+    [Parameter] public TValue Value { get; set; }
+    [Parameter] public bool Enabled { get; set; }
+    [Parameter] public int? TabIndex { get; set; }
+    [Parameter] public bool Indeterminate { get; set; }
+
+    public void ValueChangedHandler(TValue poValue)
+    {
+        if (ValueChanged.HasDelegate)
+            ValueChanged.InvokeAsync(poValue);
+    }
+}

@@ -33,20 +33,43 @@
                 <GridColumns>
                     @foreach (var column in _columns)
                     {
-                        <GridColumn Field="@column.FieldName"
-                                    Title="@column.HeaderText"
-                                    TextAlign="@column.TextAlignment"
-                                    Visible="@column.Visible"
-                                    Editable="@column.Enabled"
-                                    Width="@column.Width"
-                                    EditorTemplate="@(GetColumnEditorTemplate(column))"
-                                    Template="@(GetDefaultColumnTemplate(column))"
-                                    HeaderTemplate="@(GetDefaultHeaderColumnTemplate(column))"
-                                    Filterable="@column.Filterable"
-                                    Resizable="@column.Resizable"
-                                    MinResizableWidth="@column.MinResizableWidth"
-                                    MaxResizableWidth="@column.MaxResizableWidth"
-                                    Sortable="@column.Sortable" />
+                        switch (column.ColumnType)
+                        {
+                            case GridColumnType.CheckBoxSelect:
+                                <GridColumn Field="@column.FieldName"
+                                            Title="@column.HeaderText"
+                                            Visible="@column.Visible"
+                                            Editable="@column.Enabled"
+                                            Width="@column.Width"
+                                            Filterable="@column.Filterable"
+                                            Template="@(GetDefaultColumnTemplate(column))"
+                                            HeaderTemplate="@(GetCheckBoxSelectHeaderColumnTemplate(column))"
+                                            Resizable="@column.Resizable"
+                                            MinResizableWidth="@column.MinResizableWidth"
+                                            MaxResizableWidth="@column.MaxResizableWidth"
+                                            TextAlign="@column.TextAlignment"
+                                            Sortable="@column.Sortable"
+                                            EditorTemplate="@(GetColumnEditorTemplate(column))">
+
+                                </GridColumn>
+                                break;
+                            default:
+                                <GridColumn Field="@column.FieldName"
+                                            Title="@column.HeaderText"
+                                            TextAlign="@column.TextAlignment"
+                                            Visible="@column.Visible"
+                                            Editable="@column.Enabled"
+                                            Width="@column.Width"
+                                            EditorTemplate="@(GetColumnEditorTemplate(column))"
+                                            Template="@(GetDefaultColumnTemplate(column))"
+                                            HeaderTemplate="@(GetDefaultHeaderColumnTemplate(column))"
+                                            Filterable="@column.Filterable"
+                                            Resizable="@column.Resizable"
+                                            MinResizableWidth="@column.MinResizableWidth"
+                                            MaxResizableWidth="@column.MaxResizableWidth"
+                                            Sortable="@column.Sortable" />
+                                break;
+                        }
                     }
             </GridColumns>
         </TelerikGrid>
@@ -154,6 +177,14 @@
                     var comboBoxColumnInfo = poColumnInfo as CustomComboBoxColumn;
 
                     <text>@comboBoxColumnInfo.DictionaryData[propValue]</text>
+                    break;
+                case GridColumnType.CheckBoxSelect:
+                    var checkboxSelectValue = Convert.ToBoolean(propValue);
+
+                    <_GridCheckBoxSelectColumn @bind-Value="@checkboxSelectValue"
+                                               Enabled="true"
+                                               FieldName="@poColumnInfo.FieldName"
+                                               Context="context" />
                     break;
                 default:
                     <text>@propValue</text>
@@ -276,6 +307,39 @@
                 <div class="text-center">
                     <text>@poColumnInfo.HeaderText</text>
                 </div>
+            }
+        };
+
+        return ColumnTemplate;
+    }
+
+    public RenderFragment GetCheckBoxSelectHeaderColumnTemplate(BaseCustomColumn poColumnInfo)
+    {
+        RenderFragment ColumnTemplate = __builder =>
+        {
+            var columnInfo = poColumnInfo as CustomCheckboxSelectColumn;
+
+            if (columnInfo.ShowSelectAllHeader)
+            {
+                if (!string.IsNullOrWhiteSpace(poColumnInfo.HeaderText))
+                {
+                    <_HeaderCheckBoxSelectColumn @bind-Value="@SelectAllCheckBoxValue"
+                                                 Enabled="true"
+                                                 TabIndex="-1"
+                                                 Indeterminate="@(SelectAllCheckBoxValue == null)" />
+                    <text>@columnInfo.HeaderText</text>
+                }
+                else
+                {
+                    <_HeaderCheckBoxSelectColumn @bind-Value="@SelectAllCheckBoxValue"
+                                                 Enabled="true"
+                                                 TabIndex="-1"
+                                                 Indeterminate="@(SelectAllCheckBoxValue == null)" />
+                }
+            }
+            else
+            {
+                <text>@columnInfo.HeaderText</text>
             }
         };
 

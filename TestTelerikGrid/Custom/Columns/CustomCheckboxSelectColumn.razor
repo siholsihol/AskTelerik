@@ -1,0 +1,7 @@
+﻿@inherits BaseCustomColumn
+
+@code {
+    internal override GridColumnType ColumnType { get; set; } = GridColumnType.CheckBoxSelect;
+
+    [Parameter] public bool ShowSelectAllHeader { get; set; }
+}

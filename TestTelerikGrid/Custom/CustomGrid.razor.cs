@@ -345,5 +345,76 @@ namespace TestTelerikGrid.Custom
             return Task.CompletedTask;
         }
         #endregion
+
+        #region CheckBoxSelectColumn
+        private bool? SelectAllCheckBoxValue
+        {
+            get
+            {
+                if (DataSource.Count == 0)
+                    return false;
+
+                if (IsAllDataSelected())
+                    return true;
+                else if (IsAnyDataSelected())
+                    return null;
+
+                return false;
+            }
+
+            set
+            {
+                if (_columns.Count > 0)
+                {
+                    var lcFieldName = _columns.FirstOrDefault(x => x.ColumnType == GridColumnType.CheckBoxSelect).FieldName;
+
+                    foreach (var item in DataSource)
+                    {
+                        item.GetType().GetProperty(lcFieldName).SetValue(item, value);
+                    }
+                }
+            }
+        }
+
+        private bool IsAllDataSelected()
+        {
+            var liSelectedCount = 0;
+
+            if (_columns.Count > 0)
+            {
+                var lcFieldName = _columns.FirstOrDefault(x => x.ColumnType == GridColumnType.CheckBoxSelect).FieldName;
+
+                foreach (var item in DataSource)
+                {
+                    var isSelected = Convert.ToBoolean(item.GetType().GetProperty(lcFieldName).GetValue(item, null));
+
+                    if (isSelected)
+                        liSelectedCount++;
+                }
+            }
+
+            return liSelectedCount == DataSource.Count();
+        }
+
+        private bool IsAnyDataSelected()
+        {
+            var liSelectedCount = 0;
+
+            if (_columns.Count > 0)
+            {
+                var lcFieldName = _columns.FirstOrDefault(x => x.ColumnType == GridColumnType.CheckBoxSelect).FieldName;
+
+                foreach (var item in DataSource)
+                {
+                    var isSelected = Convert.ToBoolean(item.GetType().GetProperty(lcFieldName).GetValue(item, null));
+
+                    if (isSelected)
+                        liSelectedCount++;
+                }
+            }
+
+            return liSelectedCount > 0 && liSelectedCount < DataSource.Count();
+        }
+        #endregion
     }
 }

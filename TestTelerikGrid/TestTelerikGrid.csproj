@@ -14,4 +14,12 @@
     <PackageReference Include="Telerik.UI.for.Blazor" Version="4.6.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Custom\Columns\CustomCheckboxSelectColumn.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Custom\Columns\CustomCheckboxSelectColumn.razor" />
+  </ItemGroup>
+
 </Project>
