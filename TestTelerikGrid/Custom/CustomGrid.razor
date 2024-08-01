@@ -23,7 +23,8 @@
                       OnDelete="@OnDeleteHandler"
                       OnCancel="@OnCancelHandler" 
                       EnableLoaderContainer
-                      OnRowDoubleClick="@OnRowDoubleClick">
+                      OnRowDoubleClick="@OnRowDoubleClick"
+                      OnRowRender="@OnRowRenderHandler">
              <GridToolBarTemplate>
                  <GridCommandButton Command="Add" Icon="@FontIcon.Plus">@AddNewRowText</GridCommandButton>
                 </GridToolBarTemplate>
@@ -49,9 +50,7 @@
                                             MaxResizableWidth="@column.MaxResizableWidth"
                                             TextAlign="@column.TextAlignment"
                                             Sortable="@column.Sortable"
-                                            EditorTemplate="@(GetColumnEditorTemplate(column))">
-
-                                </GridColumn>
+                                            EditorTemplate="@(GetColumnEditorTemplate(column))" />
                                 break;
                             default:
                                 <GridColumn Field="@column.FieldName"
@@ -77,6 +76,14 @@
         @GridColumnsContent
     </div>
 </CascadingValue>
+
+<style>
+@* CSS that targets the checkbox column of the desired rows. *@
+    .unselectable-row .k-checkbox {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+</style>
 
 @code {
     public RenderFragment<object> GetDefaultColumnTemplate(BaseCustomColumn poColumnInfo)

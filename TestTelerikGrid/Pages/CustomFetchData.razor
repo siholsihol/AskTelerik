@@ -11,7 +11,8 @@
             R_ServiceSave="@R_ServiceSave"
             R_ServiceGetRecord="@R_ServiceGetRecord"
             R_AfterAdd="@R_AfterAdd"
-            R_ServiceDelete="@R_ServiceDelete">
+            R_ServiceDelete="@R_ServiceDelete" 
+            R_CheckBoxSelectRender="@R_CheckBoxSelectRender">
     <GridColumnsContent>
         <CustomCheckboxSelectColumn FieldName="@nameof(ProductDTO.Selected)"
                                     HeaderText="Selected"
@@ -75,4 +76,14 @@
         ProductService.DeleteProduct((ProductDTO)args.Data);
     }
     #endregion
+
+    private void R_CheckBoxSelectRender(R_CheckBoxSelectRenderEventArgs eventArgs)
+    {
+        var data = eventArgs.Data as ProductDTO;
+
+        if (data != null && data.Id < 100)
+        {
+            eventArgs.Enabled = false;
+        }
+    }
 }

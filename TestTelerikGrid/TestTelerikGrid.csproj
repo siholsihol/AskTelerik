@@ -11,7 +11,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="6.0.16" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="6.0.16" PrivateAssets="all" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Telerik.UI.for.Blazor" Version="4.6.0" />
+    <PackageReference Include="Telerik.UI.for.Blazor" Version="5.1.1" />
   </ItemGroup>
 
   <ItemGroup>

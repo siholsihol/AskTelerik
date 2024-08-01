@@ -26,6 +26,7 @@ namespace TestTelerikGrid.Custom
         [Parameter] public EventCallback<R_ValidationEventArgs> R_Validation { get; set; } //for validation
         [Parameter] public EventCallback<R_ServiceSaveEventArgs> R_ServiceSave { get; set; } //for save 
         [Parameter] public EventCallback<R_ServiceDeleteEventArgs> R_ServiceDelete { get; set; } //for delete 
+        [Parameter] public Action<R_CheckBoxSelectRenderEventArgs> R_CheckBoxSelectRender { get; set; }
         #endregion
 
         public IEnumerable<TModel> SelectedItems { get; set; } = Enumerable.Empty<TModel>();
@@ -256,6 +257,12 @@ namespace TestTelerikGrid.Custom
         {
             try
             {
+                var loCheckboxSelectColumn = _columns.FirstOrDefault(x => x.FieldName == e.Field);
+                if (loCheckboxSelectColumn != null)
+                {
+                    return;
+                }
+
                 await RaiseOnEdit((TModel)e.Item);
 
                 var loCurrentDataClone = ((TModel)e.Item).Clone();
@@ -414,6 +421,21 @@ namespace TestTelerikGrid.Custom
             }
 
             return liSelectedCount > 0 && liSelectedCount < DataSource.Count();
+        }
+
+        private void OnRowRenderHandler(GridRowRenderEventArgs args)
+        {
+            var lcRowClass = string.Empty;
+
+            if (R_CheckBoxSelectRender is not null)
+            {
+                var loRenderEventArgs = new R_CheckBoxSelectRenderEventArgs(args.Item);
+                R_CheckBoxSelectRender.Invoke(loRenderEventArgs);
+
+                lcRowClass = loRenderEventArgs.Enabled ? lcRowClass : lcRowClass + " " + "unselectable-row";
+            }
+
+            args.Class = lcRowClass;
         }
         #endregion
     }

@@ -59,4 +59,15 @@ namespace TestTelerikGrid.Custom.Events
             Data = data;
         }
     }
+
+    public class R_CheckBoxSelectRenderEventArgs : EventArgs
+    {
+        public object Data { get; }
+        public bool Enabled { get; set; } = true;
+
+        public R_CheckBoxSelectRenderEventArgs(object poData)
+        {
+            Data = poData;
+        }
+    }
 }
