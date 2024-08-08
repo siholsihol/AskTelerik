@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestTelerikListView", "Test
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataDummyProvider", "DataDummyProvider\DataDummyProvider.csproj", "{B9EEF889-CE27-428A-9FFE-9A036BC2C2EA}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestTelerikTreeView", "TestTelerikTreeView\TestTelerikTreeView.csproj", "{6304772C-5031-4217-B82D-A21E9E6B6859}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{B9EEF889-CE27-428A-9FFE-9A036BC2C2EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B9EEF889-CE27-428A-9FFE-9A036BC2C2EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B9EEF889-CE27-428A-9FFE-9A036BC2C2EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6304772C-5031-4217-B82D-A21E9E6B6859}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6304772C-5031-4217-B82D-A21E9E6B6859}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6304772C-5031-4217-B82D-A21E9E6B6859}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6304772C-5031-4217-B82D-A21E9E6B6859}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

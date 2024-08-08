@@ -1,0 +1,167 @@
+﻿@page "/edit"
+
+<TelerikTreeView @ref="@_treeViewRef" 
+                 Data="@FlatData"
+                 SelectionMode="@TreeViewSelectionMode.Single"
+                 @bind-SelectedItems="@SelectedItems"
+                 OnItemClick="@OnItemClick"
+                 Draggable="false"
+                 CheckBoxMode="@TreeViewCheckBoxMode.None">
+    <TreeViewBindings>
+        <TreeViewBinding TextField="Text"
+                         IdField="Id"
+                         ParentIdField="ParentId"
+                         HasChildrenField="HasChildren" />
+    </TreeViewBindings>
+</TelerikTreeView>
+
+<div class="row">
+    <div class="col-2">
+        <label>Parent Id</label>
+    </div>
+    <div class="col-4">
+        <TelerikNumericTextBox @bind-Value="@CurrentSelectedData.ParentId"></TelerikNumericTextBox>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-2">
+        <label>Id</label>
+    </div>
+    <div class="col-4">
+        <TelerikNumericTextBox @bind-Value="@CurrentSelectedData.Id"></TelerikNumericTextBox>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-2">
+        <label>Text</label>
+    </div>
+    <div class="col-4">
+        <TelerikTextBox @bind-Value="@CurrentSelectedData.Text"></TelerikTextBox>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-1">
+        <TelerikButton OnClick="@OnClickAdd">Add</TelerikButton>
+    </div>
+    <div class="col-2">
+        <TelerikButton OnClick="@OnClickSave">Save</TelerikButton>
+    </div>
+    <div class="col-2">
+        <TelerikButton OnClick="@OnClickDelete">Delete</TelerikButton>
+    </div>
+</div>
+
+@code {
+    TelerikTreeView _treeViewRef;
+    List<TreeItem> FlatData { get; set; }
+    IEnumerable<object> SelectedItems { get; set; } = new List<object>();
+    TreeItem CurrentSelectedData = new();
+    bool _isAdd = false;
+
+    protected override void OnInitialized()
+    {
+        FlatData = GetFlatData();
+
+        var firstSelected = FlatData.FirstOrDefault();
+        SelectItem(firstSelected);
+    }
+
+    private void OnItemClick(TreeViewItemClickEventArgs eventArgs)
+    {
+        _isAdd = false;
+
+        var currentItem = (TreeItem)eventArgs.Item;
+        CurrentSelectedData = currentItem;
+    }
+
+    private void OnClickAdd(MouseEventArgs eventArgs)
+    {
+        _isAdd = true;
+
+        CurrentSelectedData = new TreeItem();
+    }
+
+    private void OnClickSave(MouseEventArgs eventArgs)
+    {
+        if (_isAdd)
+        {
+            FlatData.Add(CurrentSelectedData);
+        }
+
+        _treeViewRef.Rebind();
+    }
+
+    private void OnClickDelete(MouseEventArgs eventArgs)
+    {
+        FlatData.Remove(CurrentSelectedData);
+
+        _treeViewRef.Rebind();
+    }
+
+    private void SelectItem(TreeItem item)
+    {
+        SelectedItems = Enumerable.Empty<object>();
+        var selectedList = SelectedItems.ToList();
+        selectedList.Add(item);
+
+        SelectedItems = selectedList.AsEnumerable();
+    }
+
+    List<TreeItem> GetFlatData()
+    {
+        List<TreeItem> items = new List<TreeItem>();
+
+        items.Add(new TreeItem()
+        {
+            Id = 1,
+            Text = "wwwroot",
+            ParentId = null,
+            HasChildren = true,
+            Icon = FontIcon.Folder
+        });
+        items.Add(new TreeItem()
+        {
+            Id = 2,
+            Text = "css",
+            ParentId = 1,
+            HasChildren = true,
+            Icon = FontIcon.Folder
+        });
+        items.Add(new TreeItem()
+        {
+            Id = 3,
+            Text = "js",
+            ParentId = 1,
+            HasChildren = true,
+            Icon = FontIcon.Folder
+        });
+        items.Add(new TreeItem()
+        {
+            Id = 4,
+            Text = "site.css",
+            ParentId = 2,
+            Icon = FontIcon.Css
+        });
+        items.Add(new TreeItem()
+        {
+            Id = 5,
+            Text = "scripts.js",
+            ParentId = 3,
+            Icon = FontIcon.Js
+        });
+
+        return items;
+    }
+
+    public class TreeItem
+    {
+        public int Id { get; set; }
+        public string Text { get; set; }
+        public int? ParentId { get; set; }
+        public bool HasChildren { get; set; }
+        public FontIcon? Icon { get; set; }
+    }
+}
