@@ -1,8 +1,7 @@
-﻿@page "/"
+﻿@inherits ComponentBase
 @using Telerik.DataSource
 @using Telerik.DataSource.Extensions
-
-<PageTitle>Index</PageTitle>
+@using TestTelerikTreeView.Custom.Events
 
 <TelerikTextBox Value="@TreeViewFilterValue"
                 ValueChanged="@TreeViewFilterValueChanged"
@@ -22,8 +21,8 @@
 <p>@FilterLog</p>
 
 <TelerikTreeView Data="@FilteredData"
-                 @bind-ExpandedItems="@ExpandedItems" 
-                 SelectionMode="@TreeViewSelectionMode.Single" 
+                 @bind-ExpandedItems="@ExpandedItems"
+                 SelectionMode="@TreeViewSelectionMode.Single"
                  OnItemClick="@OnItemClick">
     <TreeViewBindings>
         <TreeViewBinding>
@@ -55,33 +54,6 @@
     </TreeViewBindings>
 </TelerikTreeView>
 
-<div class="row">
-    <div class="col-2">
-        <label>Parent Id</label>
-    </div>
-    <div class="col-4">
-        <TelerikNumericTextBox @bind-Value="@CurrentSelectedData.ParentId"></TelerikNumericTextBox>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-2">
-        <label>Id</label>
-    </div>
-    <div class="col-4">
-        <TelerikNumericTextBox @bind-Value="@CurrentSelectedData.Id"></TelerikNumericTextBox>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-2">
-        <label>Text</label>
-    </div>
-    <div class="col-4">
-        <TelerikTextBox @bind-Value="@CurrentSelectedData.Text"></TelerikTextBox>
-    </div>
-</div>
-
 <style>
     .k-treeview strong {
         color: red;
@@ -93,8 +65,11 @@
     private List<TreeItem> FlatData { get; set; } = new List<TreeItem>();
     private List<TreeItem> FilteredData { get; set; } = new List<TreeItem>();
     private IEnumerable<object> ExpandedItems { get; set; } = new List<TreeItem>();
-
     private string FilterLog { get; set; } = string.Empty;
+
+    [Parameter] public List<TreeItem> DataSource { get; set; } = new();
+    [Parameter] public EventCallback<GetRecordEventArgs> GetRecord { get; set; }
+    [Parameter] public EventCallback<RefreshTreeViewEventArgs> RefreshTreeView { get; set; }
 
     #region Filtering Logic
 
@@ -191,125 +166,31 @@
 
     #endregion Filtering Logic
 
-    #region Data Generation and Classes
-
-    // private int TreeLevels { get; set; } = 3;
-    // private int RootItems { get; set; } = 3;
-    // private int ItemsPerLevel { get; set; } = 2;
-    // private int IdCounter { get; set; } = 1;
-    // private Random Rnd { get; set; } = new Random();
-
-    protected override void OnInitialized()
+    private TreeItem CurrentSelectedData = new();
+    private async void OnItemClick(TreeViewItemClickEventArgs eventArgs)
     {
-        FlatData = FilteredData = LoadFlat();
-
-        ExpandedItems = FlatData.Where(x => x.HasChildren == true);
-    }
-
-    private List<TreeItem> LoadFlat()
-    {
-        List<TreeItem> items = new List<TreeItem>();
-
-        // PopulateChildren(items, null, 1);
-        items = GetFlatData();
-
-        return items;
-    }
-
-    // private void PopulateChildren(List<TreeItem> items, int? parentId, int level)
-    // {
-    //     var itemCount = level == 1 ? RootItems : ItemsPerLevel;
-
-    //     for (int i = 1; i <= itemCount; i++)
-    //     {
-    //         var itemId = IdCounter++;
-
-    //         items.Add(new TreeItem()
-    //             {
-    //                 Id = itemId,
-    //                 Text = $"{itemId} " +
-    //                     $"{(char)Rnd.Next(65, 91)}{(char)Rnd.Next(65, 91)}{(char)Rnd.Next(65, 91)} " +
-    //                     $"{Rnd.Next(0, 10)}{Rnd.Next(0, 10)}{Rnd.Next(0, 10)}",
-    //                 ParentId = parentId,
-    //                 HasChildren = level < TreeLevels
-    //             });
-
-    //         if (level < TreeLevels)
-    //         {
-    //             PopulateChildren(items, itemId, level + 1);
-    //         }
-    //     }
-    // }
-
-    List<TreeItem> GetFlatData()
-    {
-        List<TreeItem> items = new List<TreeItem>();
-
-        items.Add(new TreeItem()
-            {
-                Id = 1,
-                Text = "wwwroot",
-                ParentId = null,
-                HasChildren = true,
-                Icon = FontIcon.Folder
-            });
-        items.Add(new TreeItem()
-            {
-                Id = 2,
-                Text = "css",
-                ParentId = 1,
-                HasChildren = true,
-                Icon = FontIcon.Folder
-            });
-        items.Add(new TreeItem()
-            {
-                Id = 3,
-                Text = "js",
-                ParentId = 1,
-                HasChildren = true,
-                Icon = FontIcon.Folder
-            });
-        items.Add(new TreeItem()
-            {
-                Id = 4,
-                Text = "site.css",
-                ParentId = 2,
-                Icon = FontIcon.Css
-            });
-        items.Add(new TreeItem()
-            {
-                Id = 5,
-                Text = "scripts.js",
-                ParentId = 3,
-                Icon = FontIcon.Js
-            });
-
-        return items;
-    }
-
-    public class TreeItem
-    {
-        public int Id { get; set; }
-        public string Text { get; set; } = string.Empty;
-        public int? ParentId { get; set; }
-        public bool HasChildren { get; set; }
-        public FontIcon? Icon { get; set; }
-    }
-
-    public class FilterOperatorItem
-    {
-        public FilterOperator Operator { get; set; }
-        public string Text { get; set; } = string.Empty;
-    }
-
-    #endregion Data Generation and Classes
-
-    TreeItem CurrentSelectedData = new();
-    private void OnItemClick(TreeViewItemClickEventArgs eventArgs)
-    {
-        // _isAdd = false;
-
         var currentItem = (TreeItem)eventArgs.Item;
         CurrentSelectedData = currentItem;
+
+        if (CurrentSelectedData != null)
+        {
+            if (GetRecord.HasDelegate)
+            {
+                var argument = new GetRecordEventArgs(currentItem);
+                await GetRecord.InvokeAsync(argument);
+            }
+        }
+    }
+
+    public async Task RefreshData()
+    {
+        var eventArgs = new RefreshTreeViewEventArgs();
+
+        if (RefreshTreeView.HasDelegate)
+            await RefreshTreeView.InvokeAsync(eventArgs);
+
+        FlatData = FilteredData = eventArgs.TreeItems;
+
+        ExpandedItems = FlatData.Where(x => x.HasChildren == true);
     }
 }

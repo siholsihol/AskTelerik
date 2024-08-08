@@ -1,0 +1,77 @@
+﻿@page "/custom"
+@using TestTelerikTreeView.Custom
+@using TestTelerikTreeView.Custom.Events
+
+<CustomTreeView @ref="@_customTreeViewRef"
+                RefreshTreeView="@RefreshTreeView" 
+                GetRecord="@GetRecord">
+
+</CustomTreeView>
+
+@code {
+    private CustomTreeView _customTreeViewRef;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await _customTreeViewRef.RefreshData();
+        }
+    }
+
+    private void RefreshTreeView(RefreshTreeViewEventArgs eventArgs)
+    {
+        eventArgs.TreeItems = GetFlatData();
+    }
+
+    private void GetRecord(GetRecordEventArgs eventArgs)
+    {
+        
+    }
+
+    private List<TreeItem> GetFlatData()
+    {
+        List<TreeItem> items = new List<TreeItem>();
+
+        items.Add(new TreeItem()
+            {
+                Id = 1,
+                Text = "wwwroot",
+                ParentId = null,
+                HasChildren = true,
+                Icon = FontIcon.Folder
+            });
+        items.Add(new TreeItem()
+            {
+                Id = 2,
+                Text = "css",
+                ParentId = 1,
+                HasChildren = true,
+                Icon = FontIcon.Folder
+            });
+        items.Add(new TreeItem()
+            {
+                Id = 3,
+                Text = "js",
+                ParentId = 1,
+                HasChildren = true,
+                Icon = FontIcon.Folder
+            });
+        items.Add(new TreeItem()
+            {
+                Id = 4,
+                Text = "site.css",
+                ParentId = 2,
+                Icon = FontIcon.Css
+            });
+        items.Add(new TreeItem()
+            {
+                Id = 5,
+                Text = "scripts.js",
+                ParentId = 3,
+                Icon = FontIcon.Js
+            });
+
+        return items;
+    }
+}
