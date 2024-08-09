@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components.Web;
 using System.Collections;
 using System.Collections.ObjectModel;
+using System.Linq.Expressions;
 using Telerik.Blazor.Components;
 using TestTelerikGrid.Custom.Columns;
 using TestTelerikGrid.Custom.Enums;
@@ -31,6 +32,9 @@ namespace TestTelerikGrid.Custom
         [Parameter] public EventCallback<R_ServiceDeleteEventArgs> R_ServiceDelete { get; set; } //for delete 
         [Parameter] public Action<R_CheckBoxSelectRenderEventArgs> R_CheckBoxSelectRender { get; set; }
         [Parameter] public EventCallback<R_DisplayEventArgs> R_Display { get; set; }
+
+        [Parameter] public EventCallback<int> PageSizeChanged { get; set; }
+        [Parameter] public Expression<Func<int>> PageSizeExpression { get; set; }
         #endregion
 
         public IEnumerable<TModel> SelectedItems { get; set; } = Enumerable.Empty<TModel>();
@@ -446,5 +450,13 @@ namespace TestTelerikGrid.Custom
             args.Class = lcRowClass;
         }
         #endregion
+
+        private async Task OnPageSizeChanged(int page)
+        {
+            PageSize = page;
+
+            if (PageSizeChanged.HasDelegate)
+                await PageSizeChanged.InvokeAsync(page);
+        }
     }
 }

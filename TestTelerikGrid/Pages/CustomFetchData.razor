@@ -13,7 +13,7 @@
             R_AfterAdd="@R_AfterAdd"
             R_ServiceDelete="@R_ServiceDelete" 
             R_CheckBoxSelectRender="@R_CheckBoxSelectRender" 
-            PageSize="10" 
+            @bind-PageSize="@_pageSize"
             Height="400px" 
             R_Display="@R_Display">
     <GridColumnsContent>
@@ -38,6 +38,7 @@
 
     private ObservableCollection<ProductDTO> products;
     private List<CategoryDTO> categories;
+    private int _pageSize = 10;
 
     protected override Task OnInitializedAsync()
     {

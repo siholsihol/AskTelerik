@@ -25,7 +25,8 @@
                       EnableLoaderContainer
                       OnRowDoubleClick="@OnRowDoubleClick"
                       OnRowRender="@OnRowRenderHandler"
-                      @bind-PageSize="@PageSize">
+                      PageSize="@PageSize" 
+                      PageSizeChanged="@OnPageSizeChanged">
              <GridToolBarTemplate>
                  <GridCommandButton Command="Add" Icon="@FontIcon.Plus">@AddNewRowText</GridCommandButton>
                 </GridToolBarTemplate>
