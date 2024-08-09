@@ -19,6 +19,9 @@ namespace TestTelerikGrid.Custom
         [Parameter] public string Width { get; set; } = "100%";
         [Parameter] public string Height { get; set; } = string.Empty;
         [Parameter] public decimal RowHeight { get; set; } = 0;
+        [Parameter] public int PageSize { get; set; } = 10;
+
+        private List<int?> PageSizes { get; set; } = new List<int?> { null, 10, 20, 30, 40, 50 };
 
         #region Events
         [Parameter] public EventCallback<R_AfterAddEventArgs> R_AfterAdd { get; set; } //for default value when add
@@ -27,6 +30,7 @@ namespace TestTelerikGrid.Custom
         [Parameter] public EventCallback<R_ServiceSaveEventArgs> R_ServiceSave { get; set; } //for save 
         [Parameter] public EventCallback<R_ServiceDeleteEventArgs> R_ServiceDelete { get; set; } //for delete 
         [Parameter] public Action<R_CheckBoxSelectRenderEventArgs> R_CheckBoxSelectRender { get; set; }
+        [Parameter] public EventCallback<R_DisplayEventArgs> R_Display { get; set; }
         #endregion
 
         public IEnumerable<TModel> SelectedItems { get; set; } = Enumerable.Empty<TModel>();
@@ -244,6 +248,10 @@ namespace TestTelerikGrid.Custom
             try
             {
                 await SelectItem((TModel)args.Item);
+
+                var loDisplayEventArgs = new R_DisplayEventArgs(CurrentSelectedData, GridMode.Normal);
+                if (R_Display.HasDelegate)
+                    await R_Display.InvokeAsync(loDisplayEventArgs);
 
                 args.ShouldRender = true;
             }

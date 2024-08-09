@@ -12,7 +12,10 @@
             R_ServiceGetRecord="@R_ServiceGetRecord"
             R_AfterAdd="@R_AfterAdd"
             R_ServiceDelete="@R_ServiceDelete" 
-            R_CheckBoxSelectRender="@R_CheckBoxSelectRender">
+            R_CheckBoxSelectRender="@R_CheckBoxSelectRender" 
+            PageSize="10" 
+            Height="400px" 
+            R_Display="@R_Display">
     <GridColumnsContent>
         <CustomCheckboxSelectColumn FieldName="@nameof(ProductDTO.Selected)"
                                     HeaderText="Selected"
@@ -40,7 +43,7 @@
     {
         categories = ProductService.GetCategories();
 
-        var loProduct = ProductService.GenerateProduct(10, categories);
+        var loProduct = ProductService.GenerateProduct(1000, categories);
         products = new ObservableCollection<ProductDTO>(loProduct);
 
         return Task.CompletedTask;
@@ -85,5 +88,10 @@
         {
             eventArgs.Enabled = false;
         }
+    }
+
+    private void R_Display(R_DisplayEventArgs eventArgs)
+    {
+        
     }
 }

@@ -70,4 +70,16 @@ namespace TestTelerikGrid.Custom.Events
             Data = poData;
         }
     }
+
+    public class R_DisplayEventArgs : EventArgs
+    {
+        public GridMode GridMode { get; }
+        public object Data { get; }
+
+        public R_DisplayEventArgs(object data, GridMode gridMode)
+        {
+            Data = data;
+            GridMode = gridMode;
+        }
+    }
 }

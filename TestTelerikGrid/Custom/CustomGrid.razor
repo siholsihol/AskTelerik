@@ -24,7 +24,8 @@
                       OnCancel="@OnCancelHandler" 
                       EnableLoaderContainer
                       OnRowDoubleClick="@OnRowDoubleClick"
-                      OnRowRender="@OnRowRenderHandler">
+                      OnRowRender="@OnRowRenderHandler"
+                      @bind-PageSize="@PageSize">
              <GridToolBarTemplate>
                  <GridCommandButton Command="Add" Icon="@FontIcon.Plus">@AddNewRowText</GridCommandButton>
                 </GridToolBarTemplate>
@@ -71,6 +72,13 @@
                         }
                     }
             </GridColumns>
+
+            <GridSettings>
+                <GridPagerSettings InputType="PagerInputType.Input"
+                                   PageSizes="@PageSizes"
+                                   Position="PagerPosition.Bottom"
+                                   Adaptive />
+            </GridSettings>
         </TelerikGrid>
 
         @GridColumnsContent
